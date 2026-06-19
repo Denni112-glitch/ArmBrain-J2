@@ -8,6 +8,8 @@ Shoulder joint for my 6-Dof robot arm- Stardance submission
 
 ![Shoulder Render](Shoulder.PNG)
 ![iso Render](joint_1_2_3_iso_bottom_left.png)
+![live Render](
+IMG-20260619-WA0039.jpeg)
 
 ## Specs
 - **Motor:** NEMA23 stepper
