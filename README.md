@@ -23,7 +23,7 @@ Next step: Integrate Artemis mission trajectory data for inverse kinematics simu
 - `/photos` - Build pictures coming soon
 
 ## Status
-✅ Working prototype - 180° motion tested  
+✅ Working prototype - 90°ramp motion tested  
 🔧 J1 base + J3 elbow in progress
 
 Built by @Denni112-glitch | Stardance 2026
