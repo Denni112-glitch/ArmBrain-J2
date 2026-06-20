@@ -25,6 +25,7 @@ Next step: Integrate Artemis mission trajectory data for inverse kinematics simu
 ## Files
 - `Nema 23 Shoulder v7.step` - CAD for manufacturing/review
 - `/photos` - Build pictures coming soon
+- `nema 17 v13.step` - This is the full almoste done arm
 
 ## Status
 ✅ Working prototype - 90°ramp motion tested  
