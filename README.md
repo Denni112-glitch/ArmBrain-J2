@@ -3,6 +3,7 @@ Shoulder joint for my 6-Dof robot arm- Stardance submission
 # ArmBrain J2 - NEMA23 Robotic Shoulder Joint
 
 180° pitch joint for a 6-DOF robot arm. Built for Hack Club Stardance Challenge 2026.
+#Build tutorial coming in the next few months 
 
 **Demo video:** [https://www.youtube.com/watch?v=yK_z2fAlV0k&t=17s&pp=0gcJCT8LAYcqIYzv]
 
