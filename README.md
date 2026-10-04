@@ -12,13 +12,15 @@ Full 6DOF arm with cycloidal reducers + custom haptic glove for teleoperation. I
 
 ### Current Status (Oct 2026)
 - ✅ J1 Base - complete & printed
-- ✅ J2 Shoulder (Nema 23 v7) - 90° ramp motion tested, working
+- ✅ J2 Shoulder (Nema 23 v7) - 120° ramp motion tested, working
 - ✅ J3 Elbow - complete
-- ✅ J4 Wrist - complete  
-- ✅ Custom Gripper - PCB built (Toolbox Robotics design)
+- ✅ J4 Wrist - almost complete  
+- ✅ Custom Gripper - built (Toolbox Robotics design)
 - 🔧 J5 Wrist Roll - almost done
 - 🔧 Haptic Glove V1 - draw-wire + AS5600 sensors, almost complete
-- ⏳ Next: Full teleop test Glove -> Arm
+- 📟 Next: get the PCB done and working
+- ⏳ Final: Full teleop test Glove -> Arm
+
 
 ### Hardware
 - **Motors:** Nema 23 (J2) + Nema 17 (J1,J3-J5)
@@ -29,7 +31,7 @@ Full 6DOF arm with cycloidal reducers + custom haptic glove for teleoperation. I
     - `nema 17 v13.step` - Full arm assembly
 
 ### Why This Project?
-17yo from a small town with sheep and mountains, building what I can't buy. All parts sourced online, designed in Fusion 360, printed on my Ender. Goal: Affordable teleop for rural makers.
+18yo from a small town with sheep and mountains, building what I can't buy. All parts sourced online, designed in Fusion 360, printed on my Bambu Lab A1 . Goal: Just to prove a point.
 
 **Looking for:** PCB sponsors (PCBWay/JLCPCB), Mechatronics internship NL/SA 2027
 
