@@ -1,37 +1,36 @@
-# ArmBrain-J2
-Shoulder joint for my 6-Dof robot arm- Stardance submission 
-# ArmBrain J2 - NEMA23 Robotic Shoulder Joint
+# ArmBrain-J2 - 6DOF Robot Arm + Haptic Glove Teleop System
 
-180° pitch joint for a 6-DOF robot arm. Built for Hack Club Stardance Challenge 2026.
-# Build tutorial coming in the next few months 
+**Built from Fouriesburg, Free State, SA 🇿🇦 | 9725**
 
-**Demo video:** [https://www.youtube.com/watch?v=yK_z2fAlV0k&t=17s&pp=0gcJCT8LAYcqIYzv]
+Full 6DOF arm with cycloidal reducers + custom haptic glove for teleoperation. Inspired by SenseGlove.
 
-![Shoulder Render](Shoulder.PNG)
-![iso Render](joint_1_2_3_iso_bottom_left.png)
-![live Render](
-IMG-20260619-WA0039.jpeg)
-![live Render 2](IMG-20260619-WA0037.jpeg)
+![Render 1]
 
-## Specs
-- **Motor:** NEMA23 stepper
-- **Driver:** TB6600 stepper driver 
-- **Bearing:** thin-section bearing for zero backlash
-- **Controller:** Arduino Uno R3
-- **Material:** PETG-CF + Aluminum
+### 🎥 Build Logs
+- **YouTube:** [@Denis_builds08](https://www.youtube.com/@Denis_builds08) - 7.8K+ views
+- **Instagram:** [@denis_builds08](https://www.instagram.com/denis_builds08/)
 
-## NASA Connection
-Next step: Integrate Artemis mission trajectory data for inverse kinematics simulations. Goal is satellite assembly task practice.
+### Current Status (Oct 2026)
+- ✅ J1 Base - complete & printed
+- ✅ J2 Shoulder (Nema 23 v7) - 90° ramp motion tested, working
+- ✅ J3 Elbow - complete
+- ✅ J4 Wrist - complete  
+- ✅ Custom Gripper - PCB built (Toolbox Robotics design)
+- 🔧 J5 Wrist Roll - almost done
+- 🔧 Haptic Glove V1 - draw-wire + AS5600 sensors, almost complete
+- ⏳ Next: Full teleop test Glove -> Arm
 
-## Files
-- `Nema 23 Shoulder v7.step` - CAD for manufacturing/review
-- `/photos` - Build pictures coming soon
-- `nema 17 v13.step` - This is the full almoste done arm
-- ![J1-J5 Render](j5.PNG)
+### Hardware
+- **Motors:** Nema 23 (J2) + Nema 17 (J1,J3-J5)
+- **Reducers:** Custom 3D printed cycloidal drives
+- **Sensors:** AS5600 magnetic encoders with diametric magnets
+- **Files:** 
+    - `Nema 23 Shoulder v7.step` - Shoulder CAD
+    - `nema 17 v13.step` - Full arm assembly
 
-## Status
-✅ Working prototype - 90°ramp motion tested  
-🔧 J1 base + J3 elbow in progress
- # J5 almost done J1-J4 are complete, sill have to print J1,J3,J4,J5
+### Why This Project?
+17yo from a small town with sheep and mountains, building what I can't buy. All parts sourced online, designed in Fusion 360, printed on my Ender. Goal: Affordable teleop for rural makers.
 
-Built by @Denni112-glitch | Stardance 2026
+**Looking for:** PCB sponsors (PCBWay/JLCPCB), Mechatronics internship NL/SA 2027
+
+Built by [@Denni112-glitch](https://github.com/Denni112-glitch) | Future Mechatronics @ Sol-Tech
