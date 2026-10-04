@@ -4,7 +4,7 @@
 
 Full 6DOF arm with cycloidal reducers + custom haptic glove for teleoperation. Inspired by SenseGlove.
 
-![Render 1]
+![Render 1](IMG-20261001-WA0018 (1).jpeg)
 
 ### 🎥 Build Logs
 - **YouTube:** [@Denis_builds08](https://www.youtube.com/@Denis_builds08) - 7.8K+ views
