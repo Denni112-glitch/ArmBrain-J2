@@ -1,0 +1,332 @@
+#include <Arduino.h>
+#include <esp_now.h>
+#include <WiFi.h>
+#include <AccelStepper.h>
+
+// Shoulder - NEMA23 + TB6600
+#define PUL_PIN_SH    4
+#define DIR_PIN_SH    5
+#define LIMIT_PIN_SH  15
+
+// Elbow - NEMA17 + TMC2209
+#define PUL_PIN_EL    17
+#define DIR_PIN_EL    18
+#define LIMIT_PIN_EL  16
+
+// Base - DC Motor + L298N
+#define BASE_IN1      8
+#define BASE_IN2      9
+#define BASE_ENA      10   // ← new wire to L298N ENA pin
+
+#define STEPS_PER_REV_23  3200
+#define STEPS_PER_REV_17  1600
+#define RATIO_23          33
+#define RATIO_17          26
+
+#define STEPS_23       (long)(STEPS_PER_REV_23 * RATIO_23 * (190.0 / 360.0))
+#define STEPS_17       (long)(STEPS_PER_REV_17 * RATIO_17 * (70.0 / 360.0))
+
+#define BACKOFF_STEPS_SH  300
+#define BACKOFF_STEPS_EL  3000
+#define SOFT_MIN_SH       -100
+#define SOFT_MIN_EL       -100
+#define SOFT_MAX_EL       50000
+#define DEADZONE          10.0f
+#define BASE_DEADZONE     35.0f
+#define SHOULDER_SPEED    5000.0f
+#define ELBOW_SPEED       10000.0f
+
+// Base speed limits — tune these to balance CW vs CCW
+#define BASE_MIN_PWM   80    // minimum PWM to get motor moving
+#define BASE_MAX_PWM   200   // maximum PWM — reduce if CW too fast
+#define BASE_MAX_GYRO  150.0f  // expected max gyroZ value
+
+AccelStepper shoulder(AccelStepper::DRIVER, PUL_PIN_SH, DIR_PIN_SH);
+AccelStepper elbow(AccelStepper::DRIVER, PUL_PIN_EL, DIR_PIN_EL);
+
+typedef struct {
+  float roll;
+  float pitch;
+  float gyroX;
+  float gyroY;
+  float gyroZ;
+  int gripAngle;
+} GloveData;
+
+GloveData incoming;
+bool allHomed = false;
+bool calibMode = false;
+
+long shoulderMax = -4700;
+long elbowMax    = -4000;
+
+unsigned long shLimitTimer = 0;
+unsigned long elLimitTimer = 0;
+
+void homeShoulder() {
+  Serial.println("Homing shoulder...");
+  shoulder.setMaxSpeed(400);
+  shoulder.setAcceleration(200);
+  shoulder.moveTo(100000);
+
+  unsigned long startTime = millis();
+  while (true) {
+    shoulder.run();
+    if (digitalRead(LIMIT_PIN_SH) == LOW) {
+      delay(100);
+      if (digitalRead(LIMIT_PIN_SH) == LOW) {
+        Serial.println("Shoulder switch confirmed!");
+        shoulder.setCurrentPosition(shoulder.currentPosition());
+        shoulder.moveTo(shoulder.currentPosition());
+        break;
+      }
+    }
+    if (millis() - startTime > 15000) {
+      Serial.println("Shoulder timeout!");
+      break;
+    }
+  }
+  while (shoulder.distanceToGo() != 0) shoulder.run();
+  delay(200);
+  shoulder.move(-BACKOFF_STEPS_SH);
+  while (shoulder.distanceToGo() != 0) shoulder.run();
+  shoulder.setCurrentPosition(0);
+  delay(300);
+  shoulder.setMaxSpeed(SHOULDER_SPEED);
+  shoulder.setAcceleration(600);
+  Serial.println("Shoulder homed!");
+}
+
+void homeElbow() {
+  Serial.println("Homing elbow...");
+  elbow.setMaxSpeed(300);
+  elbow.setAcceleration(100);
+  elbow.moveTo(-100000);
+
+  unsigned long startTime = millis();
+  while (true) {
+    elbow.run();
+    if (digitalRead(LIMIT_PIN_EL) == LOW) {
+      delay(100);
+      if (digitalRead(LIMIT_PIN_EL) == LOW) {
+        Serial.println("Elbow switch confirmed!");
+        elbow.setCurrentPosition(elbow.currentPosition());
+        elbow.moveTo(elbow.currentPosition());
+        break;
+      }
+    }
+    if (millis() - startTime > 15000) {
+      Serial.println("Elbow timeout!");
+      break;
+    }
+  }
+  while (elbow.distanceToGo() != 0) elbow.run();
+  delay(200);
+  elbow.move(-BACKOFF_STEPS_EL);
+  while (elbow.distanceToGo() != 0) elbow.run();
+  elbow.setCurrentPosition(0);
+  delay(300);
+  elbow.setMaxSpeed(ELBOW_SPEED);
+  elbow.setAcceleration(2000);
+  Serial.println("Elbow homed!");
+}
+
+void handleSerial() {
+  if (!Serial.available()) return;
+  char cmd = Serial.read();
+  while (Serial.available()) Serial.read();
+
+  if (cmd == 'c') {
+    calibMode = true;
+    Serial.println("Calib mode ON");
+    Serial.println("s = set shoulder max");
+    Serial.println("e = set elbow max");
+    Serial.println("d = done");
+  }
+  else if (cmd == 's') {
+    shoulderMax = shoulder.currentPosition();
+    Serial.print("Shoulder max: "); Serial.println(shoulderMax);
+  }
+  else if (cmd == 'e') {
+    elbowMax = elbow.currentPosition();
+    Serial.print("Elbow max: "); Serial.println(elbowMax);
+  }
+  else if (cmd == 'd') {
+    calibMode = false;
+    Serial.println("Done! Running normally.");
+    Serial.print("SH range: 0 to "); Serial.println(shoulderMax);
+    Serial.print("EL range: "); Serial.print(SOFT_MIN_EL);
+    Serial.print(" to "); Serial.println(elbowMax);
+  }
+}
+
+void onDataReceived(const uint8_t *mac, const uint8_t *data, int len) {
+  if (!allHomed || calibMode) return;
+  memcpy(&incoming, data, sizeof(incoming));
+}
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(LIMIT_PIN_SH, INPUT_PULLUP);
+  pinMode(LIMIT_PIN_EL, INPUT_PULLUP);
+
+  pinMode(BASE_IN1, OUTPUT);
+  pinMode(BASE_IN2, OUTPUT);
+  pinMode(BASE_ENA, OUTPUT);
+  digitalWrite(BASE_IN1, LOW);
+  digitalWrite(BASE_IN2, LOW);
+  analogWrite(BASE_ENA, 0);
+
+  WiFi.mode(WIFI_STA);
+  if (esp_now_init() != ESP_OK) {
+    Serial.println("ESP-NOW init failed!");
+    while (1);
+  }
+  esp_now_register_recv_cb(onDataReceived);
+
+  shoulder.setCurrentPosition(0);
+  elbow.setCurrentPosition(0);
+
+  homeShoulder();
+  homeElbow();
+
+  allHomed = true;
+  Serial.println("All homed! Ready.");
+  Serial.println("Type 'c' to calibrate far stop points.");
+}
+
+void loop() {
+  if (!allHomed) return;
+
+  handleSerial();
+
+  if (calibMode) {
+    static unsigned long lastPrint = 0;
+    if (millis() - lastPrint > 500) {
+      Serial.print("SH: "); Serial.print(shoulder.currentPosition());
+      Serial.print("  EL: "); Serial.println(elbow.currentPosition());
+      lastPrint = millis();
+    }
+
+    float pitch = incoming.pitch;
+    float roll  = incoming.roll;
+
+    if (abs(pitch) > DEADZONE) {
+      float absPitch = abs(pitch) - DEADZONE;
+      float speed = 600.0f + (absPitch / (60.0f - DEADZONE)) * 4400.0f;
+      shoulder.setMaxSpeed(constrain(speed, 600.0f, SHOULDER_SPEED));
+      shoulder.moveTo(pitch > 0 ? -100000 : 0);
+    } else {
+      shoulder.moveTo(shoulder.currentPosition());
+    }
+
+    if (abs(roll) > DEADZONE) {
+      float absRoll = abs(roll) - DEADZONE;
+      float speed = 800.0f + (absRoll / (60.0f - DEADZONE)) * 9200.0f;
+      elbow.setMaxSpeed(constrain(speed, 800.0f, ELBOW_SPEED));
+      elbow.moveTo(roll > 0 ? -100000 : 100000);
+    } else {
+      elbow.moveTo(elbow.currentPosition());
+    }
+
+    shoulder.run();
+    elbow.run();
+    return;
+  }
+
+  // ── SHOULDER limit check ──
+  if (shoulder.currentPosition() > -500) {
+    if (digitalRead(LIMIT_PIN_SH) == LOW) {
+      if (shLimitTimer == 0) shLimitTimer = millis();
+      if (millis() - shLimitTimer > 100) {
+        shoulder.stop();
+        while (shoulder.distanceToGo() != 0) shoulder.run();
+        shoulder.move(-BACKOFF_STEPS_SH);
+        while (shoulder.distanceToGo() != 0) shoulder.run();
+        shoulder.setCurrentPosition(0);
+        shLimitTimer = 0;
+        Serial.println("Shoulder limit hit!");
+        return;
+      }
+    } else { shLimitTimer = 0; }
+  } else { shLimitTimer = 0; }
+
+  // ── ELBOW limit check ──
+  if (elbow.currentPosition() > -500) {
+    if (digitalRead(LIMIT_PIN_EL) == LOW) {
+      if (elLimitTimer == 0) elLimitTimer = millis();
+      if (millis() - elLimitTimer > 100) {
+        elbow.stop();
+        while (elbow.distanceToGo() != 0) elbow.run();
+        elbow.move(-BACKOFF_STEPS_EL);
+        while (elbow.distanceToGo() != 0) elbow.run();
+        elbow.setCurrentPosition(0);
+        elLimitTimer = 0;
+        Serial.println("Elbow limit hit!");
+        return;
+      }
+    } else { elLimitTimer = 0; }
+  } else { elLimitTimer = 0; }
+
+  // ── BASE control with proportional PWM ──
+  float gyroZ = incoming.gyroZ;
+  if (abs(gyroZ) < BASE_DEADZONE) {
+    // Wrist still = stop
+    digitalWrite(BASE_IN1, LOW);
+    digitalWrite(BASE_IN2, LOW);
+    analogWrite(BASE_ENA, 0);
+  } else {
+    // Scale PWM proportionally to twist speed
+    float absGyro = abs(gyroZ) - BASE_DEADZONE;
+    int pwm = (int)map(absGyro, 0, BASE_MAX_GYRO - BASE_DEADZONE,
+                       BASE_MIN_PWM, BASE_MAX_PWM);
+    pwm = constrain(pwm, BASE_MIN_PWM, BASE_MAX_PWM);
+
+    if (gyroZ > BASE_DEADZONE) {
+      // Twist right = clockwise
+      digitalWrite(BASE_IN1, HIGH);
+      digitalWrite(BASE_IN2, LOW);
+    } else {
+      // Twist left = counterclockwise
+      digitalWrite(BASE_IN1, LOW);
+      digitalWrite(BASE_IN2, HIGH);
+    }
+    analogWrite(BASE_ENA, pwm);
+  }
+
+  // ── SHOULDER control (pitch) ──
+  float pitch = incoming.pitch;
+  if (abs(pitch) < DEADZONE) {
+    shoulder.moveTo(shoulder.currentPosition());
+  } else {
+    float absPitch = abs(pitch) - DEADZONE;
+    float speed = 600.0f + (absPitch / (60.0f - DEADZONE)) * 4400.0f;
+    shoulder.setMaxSpeed(constrain(speed, 600.0f, SHOULDER_SPEED));
+    shoulder.moveTo(pitch > 0 ? shoulderMax : SOFT_MIN_SH);
+  }
+
+  // ── ELBOW control (roll) ──
+  float roll = incoming.roll;
+  if (abs(roll) < DEADZONE) {
+    elbow.moveTo(elbow.currentPosition());
+  } else {
+    float absRoll = abs(roll) - DEADZONE;
+    float speed = 800.0f + (absRoll / (60.0f - DEADZONE)) * 9200.0f;
+    elbow.setMaxSpeed(constrain(speed, 800.0f, ELBOW_SPEED));
+    elbow.moveTo(roll > 0 ? SOFT_MIN_EL : SOFT_MAX_EL);
+  }
+
+  shoulder.run();
+  elbow.run();
+
+  static unsigned long lastPrint = 0;
+  if (millis() - lastPrint > 100) {
+    Serial.print("GyroZ: "); Serial.print(gyroZ, 1);
+    Serial.print("  PWM: "); Serial.print(abs(gyroZ) > BASE_DEADZONE ?
+      (int)map(abs(gyroZ)-BASE_DEADZONE, 0, BASE_MAX_GYRO-BASE_DEADZONE,
+               BASE_MIN_PWM, BASE_MAX_PWM) : 0);
+    Serial.print("  SH: "); Serial.print(shoulder.currentPosition());
+    Serial.print("  EL: "); Serial.println(elbow.currentPosition());
+    lastPrint = millis();
+  }
+}
