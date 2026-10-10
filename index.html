@@ -6,53 +6,68 @@
 <title>Denis Long — ArmBrain J2</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#08080a;--card:#121214;--card2:#18181b;--text:#fafafa;--muted:#a1a1aa;--dim:#52525b;--accent:#ccff00;--border:#27272a}
+:root{--bg:#08080a;--card:#121214;--card2:#18181b;--text:#fafafa;--muted:#a1a1aa;--dim:#52525b;--accent:#ccff00;--border:#27272a;--blue:#2a9df4}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;line-height:1.6}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;line-height:1.6;overflow-x:hidden;position:relative}
+/* FUN BACKGROUND - yellow + black blend */
+body::before{content:"";position:fixed;inset:0;z-index:-2;background:
+radial-gradient(600px at 15% 10%, rgba(204,255,0,0.18), transparent 60%),
+radial-gradient(800px at 85% 30%, rgba(204,255,0,0.12), transparent 60%),
+radial-gradient(500px at 50% 90%, rgba(42,157,244,0.08), transparent 60%),
+linear-gradient(180deg, #08080a 0%, #0f0f0a 50%, #08080a 100%)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;background-image:linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);background-size:32px 32px;mask-image:radial-gradient(ellipse at center, black 60%, transparent 90%)}
 .mono{font-family:'JetBrains Mono',monospace}
 .wrap{max-width:900px;margin:0 auto;padding:0 24px}
-nav{position:sticky;top:0;z-index:10;background:rgba(8,8,10,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 0}
+nav{position:sticky;top:0;z-index:10;background:rgba(8,8,10,0.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 0}
 nav .wrap{display:flex;justify-content:space-between;align-items:center}
-.logo{font-weight:700}
-.status{font-size:11px;color:var(--muted);border:1px solid var(--border);padding:5px 12px;border-radius:999px}
+.logo{font-weight:700;letter-spacing:-0.5px}
+.logo span{color:var(--accent)}
+.status{font-size:11px;color:var(--muted);border:1px solid var(--border);padding:5px 12px;border-radius:999px;background:rgba(204,255,0,0.05)}
 .hero{padding:90px 0 30px}
 .hero h1{font-size:clamp(42px,8vw,74px);line-height:0.9;letter-spacing:-2.5px;font-weight:700}
-.hero h1 em{font-style:normal;color:var(--accent)}
+.hero h1 em{font-style:normal;color:var(--accent);text-shadow:0 0 30px rgba(204,255,0,0.4)}
 .hero .sub{margin-top:22px;font-size:18px;color:var(--muted);max-width:580px}
 .btn-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
-.btn{padding:14px 24px;border-radius:12px;font-weight:600;font-size:14px;text-decoration:none}
-.btn-primary{background:#fff;color:#000}
+.btn{padding:14px 24px;border-radius:12px;font-weight:600;font-size:14px;text-decoration:none;transition:0.25s;border:1px solid transparent}
+.btn-primary{background:#fff;color:#000;box-shadow:0 0 0 0 transparent}
+.btn-primary:hover{box-shadow:0 0 0 4px rgba(42,157,244,0.6), 0 0 20px rgba(42,157,244,0.4);transform:translateY(-2px)}
 .btn-ghost{border:1px solid var(--border);background:var(--card);color:#fff}
+.btn-ghost:hover{border-color:var(--accent);box-shadow:0 0 0 4px rgba(204,255,0,0.25), 0 0 20px rgba(204,255,0,0.15);transform:translateY(-2px)}
 .grid{display:grid;grid-template-columns:1.2fr 0.8fr;gap:16px;margin:50px 0}
 @media(max-width:700px){.grid{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:26px}
+.card{background:rgba(18,18,20,0.9);border:1px solid var(--border);border-radius:20px;padding:26px;backdrop-filter:blur(10px);transition:0.25s}
+.card:hover{border-color:var(--blue);box-shadow:0 0 0 4px rgba(42,157,244,0.5), 0 0 30px rgba(42,157,244,0.2);transform:translateY(-3px)}
 .card h3{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:18px}
 .spec{padding:12px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;font-size:14px}
 .spec:last-child{border:none}
 .spec span:first-child{color:var(--muted)}
-.tag{display:inline-block;font-size:11px;padding:6px 12px;border-radius:999px;border:1px solid var(--border);background:var(--card2);margin:4px 4px 0 0;color:var(--muted)}
-.about{margin:20px 0 40px;padding:40px;border-radius:24px;background:linear-gradient(180deg,#121214,#0f0f10);border:1px solid var(--border)}
+.tag{display:inline-block;font-size:11px;padding:6px 12px;border-radius:999px;border:1px solid var(--border);background:var(--card2);margin:4px 4px 0 0;color:var(--muted);transition:0.2s}
+.tag:hover{border-color:var(--accent);color:var(--accent)}
+.about{margin:20px 0 40px;padding:40px;border-radius:24px;background:linear-gradient(135deg, rgba(18,18,20,0.95), rgba(24,24,12,0.9));border:1px solid var(--border);backdrop-filter:blur(10px);transition:0.25s;position:relative;overflow:hidden}
+.about::before{content:"";position:absolute;top:-50%;left:-30%;width:80%;height:200%;background:radial-gradient(ellipse, rgba(204,255,0,0.08), transparent 60%);pointer-events:none}
+.about:hover{border-color:var(--blue);box-shadow:0 0 0 4px rgba(42,157,244,0.5), 0 0 40px rgba(42,157,244,0.15)}
 .about h2{font-size:28px;letter-spacing:-1px;margin-bottom:16px}
-.about p{color:var(--muted);font-size:15px;margin-bottom:14px}
+.about p{color:var(--muted);font-size:15px;margin-bottom:14px;position:relative}
 .about strong{color:var(--text)}
 .contact{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:30px 0 50px}
 @media(max-width:600px){.contact{grid-template-columns:1fr}}
-.contact-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px}
+.contact-card{background:rgba(18,18,20,0.9);border:1px solid var(--border);border-radius:16px;padding:20px;backdrop-filter:blur(10px);transition:0.25s}
+.contact-card:hover{border-color:var(--blue);box-shadow:0 0 0 4px rgba(42,157,244,0.5), 0 0 25px rgba(42,157,244,0.2);transform:translateY(-3px)}
 .contact-card .label{font-size:11px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
 .contact-card .value{font-weight:600;word-break:break-all}
 .contact-card a{color:var(--text);text-decoration:none}
 .contact-card a:hover{color:var(--accent)}
 .links{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:40px 0}
 @media(max-width:900px){.links{grid-template-columns:repeat(2,1fr)}}
-.link-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;text-decoration:none;color:inherit;transition:0.2s}
-.link-card:hover{border-color:#fff;transform:translateY(-2px)}
+.link-card{background:rgba(18,18,20,0.9);border:1px solid var(--border);border-radius:16px;padding:20px;text-decoration:none;color:inherit;transition:0.25s;backdrop-filter:blur(10px)}
+.link-card:hover{border-color:var(--blue);box-shadow:0 0 0 4px rgba(42,157,244,0.6), 0 0 30px rgba(42,157,244,0.25);transform:translateY(-4px)}
 .link-card .label{font-size:11px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
 .link-card .value{font-weight:600;font-size:14px}
 footer{padding:40px 0 60px;border-top:1px solid var(--border);color:var(--dim);font-size:13px;display:flex;justify-content:space-between}
 </style>
 </head>
 <body>
-<nav><div class="wrap"><div class="logo mono">DENIS LONG // ARMBRAIN</div><div class="status mono">ZA — ROBOTICS BUILDER</div></div></nav>
+<nav><div class="wrap"><div class="logo mono">DENIS LONG // <span>ARMBRAIN</span></div><div class="status mono">ZA — ROBOTICS BUILDER</div></div></nav>
 
 <div class="wrap">
 <div class="hero">
@@ -105,11 +120,11 @@ footer{padding:40px 0 60px;border-top:1px solid var(--border);color:var(--dim);f
 <a class="link-card" href="https://github.com/Denni112-glitch/ArmBrain-J2" target="_blank"><div class="label mono">GitHub</div><div class="value">CAD + Code</div></a>
 <a class="link-card" href="https://www.youtube.com/@Denis_builds08" target="_blank"><div class="label mono">YouTube</div><div class="value">@Denis_builds08</div></a>
 <a class="link-card" href="https://www.instagram.com/denis_builds08/" target="_blank"><div class="label mono">Instagram</div><div class="value">@denis_builds08</div></a>
-<a class="link-card" href="https://x.com/Denis_builds08" target="_blank"><div class="label mono">X / Twitter</div><div class="value">@Denis_builds08</div></a>
+<a class="link-card" href="https://x.com/Denis1940714918" target="_blank"><div class="label mono">X / Twitter</div><div class="value">@Denis1940714918</div></a>
 <a class="link-card" href="https://www.linkedin.com/in/denis-long-915915290" target="_blank"><div class="label mono">LinkedIn</div><div class="value">Denis Long</div></a>
 </div>
 
-<footer><span class="mono">© 2026 DENIS LONG — BUILT IN SA</span><span class="mono">CONTACT OPEN</span></footer>
+<footer><span class="mono">© 2026 DENIS LONG — BUILT IN SA</span><span class="mono">GLOW EDITION ⚡</span></footer>
 </div>
 </body>
 </html>
