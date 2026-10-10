@@ -8,71 +8,93 @@
 <style>
 :root{--bg:#08080a;--card:#121214;--card2:#18181b;--text:#fafafa;--muted:#a1a1aa;--dim:#52525b;--accent:#ccff00;--border:#27272a;--green:#00ff88}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;line-height:1.6}
 .mono{font-family:'JetBrains Mono',monospace}
 .wrap{max-width:900px;margin:0 auto;padding:0 24px}
-nav{position:sticky;top:0;z-index:10;background:rgba(8,8,10,0.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 0}
+nav{position:sticky;top:0;z-index:10;background:rgba(8,8,10,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 0}
 nav .wrap{display:flex;justify-content:space-between;align-items:center}
-.logo{font-weight:700}
-.status{font-size:12px;color:var(--green);border:1px solid #1a2e1a;background:#0a1a0a;padding:4px 10px;border-radius:999px}
-.hero{padding:80px 0 40px}
-.hero h1{font-size:clamp(40px,8vw,72px);line-height:0.95;letter-spacing:-2px;font-weight:700}
+.logo{font-weight:700;letter-spacing:-0.5px}
+.status{font-size:11px;color:var(--muted);border:1px solid var(--border);padding:5px 12px;border-radius:999px}
+.hero{padding:90px 0 30px}
+.hero h1{font-size:clamp(42px,8vw,74px);line-height:0.9;letter-spacing:-2.5px;font-weight:700}
 .hero h1 em{font-style:normal;color:var(--accent)}
-.hero .sub{margin-top:20px;font-size:18px;color:var(--muted);max-width:560px;line-height:1.6}
-.grid{display:grid;grid-template-columns:1.2fr 0.8fr;gap:16px;margin:40px 0}
+.hero .sub{margin-top:22px;font-size:18px;color:var(--muted);max-width:580px}
+.btn-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.btn{padding:14px 24px;border-radius:12px;font-weight:600;font-size:14px}
+.btn-primary{background:#fff;color:#000}
+.btn-ghost{border:1px solid var(--border);background:var(--card);color:#fff}
+.grid{display:grid;grid-template-columns:1.2fr 0.8fr;gap:16px;margin:50px 0}
 @media(max-width:700px){.grid{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:26px}
+.card h3{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:18px}
 .spec{padding:12px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;font-size:14px}
 .spec:last-child{border:none}
 .spec span:first-child{color:var(--muted)}
 .tag{display:inline-block;font-size:11px;padding:6px 12px;border-radius:999px;border:1px solid var(--border);background:var(--card2);margin:4px 4px 0 0;color:var(--muted)}
-.btn-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
-.btn{padding:14px 24px;border-radius:12px;font-weight:600;font-size:14px;display:inline-flex;gap:8px}
-.btn-primary{background:#fff;color:#000}
-.btn-ghost{border:1px solid var(--border);background:var(--card)}
-.links{margin:60px 0 40px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.about{margin:20px 0 60px;padding:40px;border-radius:24px;background:linear-gradient(180deg,#121214,#0f0f10);border:1px solid var(--border)}
+.about h2{font-size:28px;letter-spacing:-1px;margin-bottom:16px}
+.about p{color:var(--muted);font-size:15px;margin-bottom:14px}
+.about strong{color:var(--text)}
+.links{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:40px 0}
 @media(max-width:600px){.links{grid-template-columns:1fr}}
-.link-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px}
+.link-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;transition:0.2s}
+.link-card:hover{border-color:#fff}
 .link-card .label{font-size:11px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
 .link-card .value{font-weight:600}
-footer{padding:40px 0 60px;border-top:1px solid var(--border);margin-top:40px;color:var(--dim);font-size:13px;display:flex;justify-content:space-between}
+footer{padding:40px 0 60px;border-top:1px solid var(--border);color:var(--dim);font-size:13px;display:flex;justify-content:space-between}
 </style>
 </head>
 <body>
-<nav><div class="wrap"><div class="logo mono">DENIS LONG // J2</div><div class="status mono">● LIVE BUILD — STARDANCE '26</div></div></nav>
+<nav><div class="wrap"><div class="logo mono">DENIS LONG // ARMBRAIN</div><div class="status mono">SOUTH AFRICA — BUILDER</div></div></nav>
+
 <div class="wrap">
 <div class="hero">
-<h1>ARMBRAIN<br><em>J2 SHOULDER</em></h1>
-<p class="sub">180° pitch joint for a full 6-DOF robotic arm. NEMA23 + cycloidal PETG-CF gearbox. Built for Hack Club Stardance. This is joint 2 of 6 — the one that takes all the load.</p>
+<h1>ARMBRAIN<br><em>J2</em> SHOULDER</h1>
+<p class="sub">180° pitch joint for a full 6-DOF robot arm. NEMA23 + custom cycloidal gearbox in PETG-CF. Designed, printed and tested from my workshop.</p>
 <div class="btn-row">
 <a class="btn btn-primary" href="https://github.com/Denni112-glitch/ArmBrain-J2" target="_blank">View Build Logs →</a>
 <a class="btn btn-ghost" href="https://www.youtube.com/watch?v=yK_z2fAlV0k" target="_blank">Watch Demo</a>
 </div>
 </div>
+
 <div class="grid">
 <div class="card">
-<h3 style="font-size:12px;color:#52525b;margin-bottom:16px;letter-spacing:1.5px">SPECS</h3>
+<h3>Specs</h3>
 <div class="spec"><span>Motor</span><span>NEMA23 — 1.9Nm</span></div>
 <div class="spec"><span>Driver</span><span>TB6600 / TMC2209</span></div>
-<div class="spec"><span>Gearbox</span><span>Cycloidal — 19:1</span></div>
+<div class="spec"><span>Gearbox</span><span>Cycloidal 19:1</span></div>
 <div class="spec"><span>Material</span><span>PETG-CF + Aluminium</span></div>
 <div class="spec"><span>Controller</span><span>Arduino → ESP32-S3</span></div>
-<div class="spec"><span>Range</span><span>180° pitch</span></div>
+<div class="spec"><span>Range</span><span>180° pitch, zero backlash</span></div>
 <div style="margin-top:16px">
-<span class="tag">FUSION 360</span><span class="tag">PETG-CF</span><span class="tag">CYCLOIDAL</span><span class="tag">NEMA23</span>
+<span class="tag">FUSION 360</span><span class="tag">PETG-CF</span><span class="tag">CYCLOIDAL</span><span class="tag">NEMA23</span><span class="tag">ROBOTICS</span>
 </div>
 </div>
 <div class="card">
-<h3 style="font-size:12px;color:#52525b;margin-bottom:16px;letter-spacing:1.5px">STATUS</h3>
-<p style="font-size:14px;line-height:1.6;color:#a1a1aa">✅ J2 working prototype — 90° ramp tested<br>🔧 J1 base + J3 elbow in progress<br>🎯 Goal: full 6-DOF for satellite assembly sim</p>
+<h3>Status</h3>
+<p style="font-size:14px;color:var(--muted);line-height:1.6">✅ J2 shoulder prototype — 90° ramp tested, working<br>🔧 J1 base + J3 elbow in progress<br>🎯 Next: Full 6-DOF arm for practical automation tasks</p>
+<div style="margin-top:20px;padding:16px;background:var(--card2);border-radius:12px;border:1px solid var(--border)">
+<p style="font-size:12px;color:var(--dim);margin-bottom:6px" class="mono">FOCUS</p>
+<p style="font-size:13px;color:var(--muted)">Building affordable, high-torque joints that anyone can print and assemble.</p>
 </div>
 </div>
+</div>
+
+<div class="about">
+<h2>About Me</h2>
+<p>I'm <strong>Denis Long</strong> — a builder from South Africa obsessed with making robots that actually work outside a lab.</p>
+<p>I design and build robotic arms from scratch: CAD in Fusion 360, printing in PETG-CF, wiring, coding and testing until it moves. No team, no lab, just my workshop, a 3D printer, and a lot of failed prints.</p>
+<p>ArmBrain J2 is my shoulder joint — the hardest joint in a 6-DOF arm because it carries all the weight. I went with a cycloidal gearbox for zero backlash and high torque, because harmonic drives are too expensive for real builders.</p>
+<p>I'm looking for internships, collaborations and people who want to build real hardware. If you're into robotics, mechatronics or just like seeing things move — let's talk.</p>
+</div>
+
 <div class="links">
-<a class="link-card" href="https://github.com/Denni112-glitch/ArmBrain-J2" target="_blank"><div class="label mono">GitHub</div><div class="value">CAD + STLs + Code</div></a>
-<a class="link-card" href="https://www.linkedin.com/in/denis-long-915915290" target="_blank"><div class="label mono">LinkedIn</div><div class="value">Denis Long</div></a>
-<a class="link-card" href="https://x.com/Denis_builds08" target="_blank"><div class="label mono">X / Twitter</div><div class="value">@Denis_builds08</div></a>
+<a class="link-card" href="https://github.com/Denni112-glitch/ArmBrain-J2" target="_blank"><div class="label mono">GitHub</div><div class="value">CAD + STLs + Code →</div></a>
+<a class="link-card" href="https://www.linkedin.com/in/denis-long-915915290" target="_blank"><div class="label mono">LinkedIn</div><div class="value">Denis Long →</div></a>
+<a class="link-card" href="https://x.com/Denis_builds08" target="_blank"><div class="label mono">X / Twitter</div><div class="value">@Denis_builds08 →</div></a>
 </div>
-<footer><span class="mono">© 2026 DENIS LONG — BUILT IN PUBLIC</span><span class="mono">STARDANCE</span></footer>
+
+<footer><span class="mono">© 2026 DENIS LONG — BUILT IN PUBLIC</span><span class="mono">ZA • ROBOTICS</span></footer>
 </div>
 </body>
 </html>
